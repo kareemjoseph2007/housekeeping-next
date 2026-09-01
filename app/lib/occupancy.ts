@@ -8,9 +8,25 @@ export type Room = "bathroom" | "kitchen";
 export type Occupancy = {
     bathroom: boolean;
     kitchen: boolean;
+    bathroomOccupants: string[];
+    kitchenOccupants: string[];
     currentUserLocation: string | null;
     hasFamily: boolean;
 };
+
+function occupantName(user: { name: string | null; email: string }) {
+    const name = user.name?.trim();
+    return name || user.email;
+}
+
+function occupantsInRoom(
+    members: { location: string | null; user: { name: string | null; email: string } }[],
+    room: Room
+) {
+    return members
+        .filter((member) => member.location === room)
+        .map((member) => occupantName(member.user));
+}
 
 async function getMembership(familyId: string) {
     const userId = await getCurrentUserId();
@@ -34,6 +50,8 @@ export async function getOccupancy(familyId: string): Promise<Occupancy> {
         return {
             bathroom: false,
             kitchen: false,
+            bathroomOccupants: [],
+            kitchenOccupants: [],
             currentUserLocation: null,
             hasFamily: false,
         };
@@ -41,12 +59,22 @@ export async function getOccupancy(familyId: string): Promise<Occupancy> {
 
     const familyMembers = await prisma.familyMember.findMany({
         where: { familyId },
-        select: { location: true },
+        select: {
+            location: true,
+            user: {
+                select: { name: true, email: true },
+            },
+        },
     });
 
+    const bathroomOccupants = occupantsInRoom(familyMembers, "bathroom");
+    const kitchenOccupants = occupantsInRoom(familyMembers, "kitchen");
+
     return {
-        bathroom: familyMembers.some((member) => member.location === "bathroom"),
-        kitchen: familyMembers.some((member) => member.location === "kitchen"),
+        bathroom: bathroomOccupants.length > 0,
+        kitchen: kitchenOccupants.length > 0,
+        bathroomOccupants,
+        kitchenOccupants,
         currentUserLocation: membership.location,
         hasFamily: true,
     };

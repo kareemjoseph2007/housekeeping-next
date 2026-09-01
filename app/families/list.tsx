@@ -9,7 +9,7 @@ export default async function ListFamilies() {
     }
 
     if (!families.families || families.families.length === 0) {
-        return <p>No families found.</p>;
+        return <p>Create or join a family to use the map.</p>;
     }
 
     return (

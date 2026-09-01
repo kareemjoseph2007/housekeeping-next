@@ -8,21 +8,29 @@ export default function Map({ occupancy, familyId }: { occupancy: Occupancy; fam
             <h1>Map</h1>
 
             <div className="floorplan" role="img" aria-label="2D house floor plan">
-                <div className="room bathroom" aria-label="Bathroom">
+                <div
+                    className={`room bathroom${occupancy.currentUserLocation === "bathroom" ? " room-you" : ""}`}
+                    aria-label="Bathroom"
+                >
                     <Bathroom
                         familyId={familyId}
                         isOccupied={occupancy.bathroom}
                         isUserOccupying={occupancy.currentUserLocation === "bathroom"}
                         hasFamily={occupancy.hasFamily}
+                        occupants={occupancy.bathroomOccupants}
                     />
                 </div>
 
-                <div className="room kitchen" aria-label="Kitchen">
+                <div
+                    className={`room kitchen${occupancy.currentUserLocation === "kitchen" ? " room-you" : ""}`}
+                    aria-label="Kitchen"
+                >
                     <Kitchen
                         familyId={familyId}
                         isOccupied={occupancy.kitchen}
                         isUserOccupying={occupancy.currentUserLocation === "kitchen"}
                         hasFamily={occupancy.hasFamily}
+                        occupants={occupancy.kitchenOccupants}
                     />
                 </div>
 
