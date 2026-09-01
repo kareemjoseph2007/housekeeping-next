@@ -1,7 +1,10 @@
+import { redirect } from "next/navigation"
+import { getCurrentUserId } from "../lib/auth/auth";
 
-export default function MapPage() {
-return (
-    <div>
-        <h1>Map Page</h1>
-    </div>
-)}
+export default async function MapPage() {
+const userId = await getCurrentUserId();
+
+if (!userId) {
+    redirect("/login");
+}
+redirect("/families");}

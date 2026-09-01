@@ -1,22 +1,79 @@
-'use server';
+import { getCurrentUserId } from "./auth/auth";
+import { prisma } from "./prisma";
 
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
+export type Room = "bathroom" | "kitchen";
 
-type TokenPayload = jwt.JwtPayload & { userId: number };
+export type Occupancy = {
+    bathroom: boolean;
+    kitchen: boolean;
+    bathroomOccupants: string[];
+    kitchenOccupants: string[];
+    currentUserLocation: string | null;
+    hasFamily: boolean;
+};
 
-export async function getCurrentUserId(): Promise<number | null> {
-    const token = (await cookies()).get("token")?.value;
-    const secret = process.env.NEXTAUTH_SECRET;
+function occupantName(user: { name: string | null; email: string }) {
+    const name = user.name?.trim();
+    return name || user.email;
+}
 
-    if (!token || !secret) {
+function occupantsInRoom(
+    members: { location: string | null; user: { name: string | null; email: string } }[],
+    room: Room
+) {
+    return members
+        .filter((member) => member.location === room)
+        .map((member) => occupantName(member.user));
+}
+
+export async function getMembership(familyId: string) {
+    const userId = await getCurrentUserId();
+    if (!userId) {
         return null;
     }
 
-    try {
-        const payload = jwt.verify(token, secret) as TokenPayload;
-        return typeof payload.userId === "number" ? payload.userId : null;
-    } catch {
-        return null;
+    return prisma.familyMember.findUnique({
+        where: {
+            userId_familyId: {
+                userId,
+                familyId,
+            },
+        },
+    });
+}
+
+export async function getOccupancy(familyId: string): Promise<Occupancy> {
+    const membership = await getMembership(familyId);
+    if (!membership) {
+        return {
+            bathroom: false,
+            kitchen: false,
+            bathroomOccupants: [],
+            kitchenOccupants: [],
+            currentUserLocation: null,
+            hasFamily: false,
+        };
     }
+
+    const familyMembers = await prisma.familyMember.findMany({
+        where: { familyId },
+        select: {
+            location: true,
+            user: {
+                select: { name: true, email: true },
+            },
+        },
+    });
+
+    const bathroomOccupants = occupantsInRoom(familyMembers, "bathroom");
+    const kitchenOccupants = occupantsInRoom(familyMembers, "kitchen");
+
+    return {
+        bathroom: bathroomOccupants.length > 0,
+        kitchen: kitchenOccupants.length > 0,
+        bathroomOccupants,
+        kitchenOccupants,
+        currentUserLocation: membership.location,
+        hasFamily: true,
+    };
 }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Map from "../../components/map";
-import { getOccupancy } from "../../lib/occupancy";
+import { getOccupancy } from "../../lib/occupancy.server";
 
 export default async function MapPage({
     params,
