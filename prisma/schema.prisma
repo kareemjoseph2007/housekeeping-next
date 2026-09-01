@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id          Int            @id @default(autoincrement())
+  email       String         @unique
+  password    String
+  name        String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  memberships FamilyMember[] // all the families this user belongs to
+}
+
+model Family {
+  id          String         @id @default(cuid())
+  name        String
+
+  memberships FamilyMember[] // all users in this family
+}
+
+model FamilyMember {
+  id          String    @id @default(cuid())
+  userId      Int
+  familyId    String
+  joinedAt    DateTime  @default(now())
+
+  // occupancy info, scoped to this user-in-this-family
+  location    String?
+  startedAt   DateTime  @default(now())
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  family      Family    @relation(fields: [familyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, familyId]) // no duplicate membership rows
+}

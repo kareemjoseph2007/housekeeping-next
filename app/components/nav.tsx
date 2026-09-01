@@ -1,0 +1,26 @@
+import Link from "next/link";
+import { getCurrentUserId } from "../lib/auth/auth";
+import { logout } from "../lib/auth/logout";
+
+export default async function Nav() {
+    const userId = await getCurrentUserId();
+
+    return (
+        <nav className="app-nav">
+            <Link href="/">Home</Link>
+            {userId ? (
+                <>
+                    <Link href="/families">Families</Link>
+                    <form action={logout}>
+                        <button type="submit">Logout</button>
+                    </form>
+                </>
+            ) : (
+                <>
+                    <Link href="/login">Login</Link>
+                    <Link href="/signup">Signup</Link>
+                </>
+            )}
+        </nav>
+    );
+}
