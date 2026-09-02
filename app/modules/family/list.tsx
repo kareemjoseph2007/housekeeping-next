@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { listFamilies } from "../lib/app/listfamilies";
+import { listFamilies } from "./listfamilies";
 
 export default async function ListFamilies() {
     const families = await listFamilies();

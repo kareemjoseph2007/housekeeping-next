@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { getCurrentUserId } from "../lib/auth/auth";
-import { logout } from "../lib/auth/logout";
+import { getCurrentUserId } from "../modules/auth/auth";
+import { logout } from "../modules/auth/logout";
 
 export default async function Nav() {
     const userId = await getCurrentUserId();

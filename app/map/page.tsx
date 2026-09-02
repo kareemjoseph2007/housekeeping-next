@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation"
-import { getCurrentUserId } from "../lib/auth/auth";
+import { getCurrentUserId } from "../modules/auth/auth";
 
 export default async function MapPage() {
 const userId = await getCurrentUserId();

@@ -1,7 +1,6 @@
-"use server"
 
-import { comparePassword } from "../utils/bcrypt";
-import { prisma } from "../prisma";
+import { comparePassword } from "../lib/utils/bcrypt";
+import { prisma } from "../lib/prisma";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { signToken } from "./signtoken";

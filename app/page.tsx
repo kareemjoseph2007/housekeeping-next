@@ -1,6 +1,6 @@
 
 import { redirect } from "next/navigation";
-import { getCurrentUserId } from "./lib/auth/auth";
+import { getCurrentUserId } from "./modules/auth/auth";
 import Link from "next/link";
 
 export default async function Home() {

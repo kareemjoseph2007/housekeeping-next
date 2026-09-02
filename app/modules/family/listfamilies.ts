@@ -1,5 +1,5 @@
 import { Family } from "@prisma/client";
-import { prisma } from "../prisma";
+import { prisma } from "../lib/prisma";
 import { getCurrentUserId } from "../auth/auth";
 
 export type ListFamiliesState = {

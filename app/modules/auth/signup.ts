@@ -1,7 +1,7 @@
 "use server"
 
-import { hashPassword } from "../utils/bcrypt";
-import { prisma } from "../prisma";
+import { hashPassword } from "../lib/utils/bcrypt";
+import { prisma } from "../lib/prisma";
 import { cookies } from "next/headers";
 import { signToken } from "./signtoken";
 

@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
-import { createFamily } from "../lib/app/createfamily";
-import { joinFamily } from "../lib/app/joinfamily";
+import { createFamily } from "../../family/createfamily";
+import { joinFamily } from "../../family/joinfamily";
 
 export default function FamilyForms() {
     const [createState, createAction, createPending] = useActionState(createFamily, null);

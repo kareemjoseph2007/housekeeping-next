@@ -2,14 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { setRoomOccupancy } from "../lib/occupancy.actions";
+import { setRoomOccupancy } from "../occupancy.actions";
 
 const OCCUPANCY_ERRORS: Record<string, string> = {
   NOT_A_MEMBER: "You are not a member of this family.",
   NOT_IN_ROOM: "You are not in this room.",
 };
 
-export default function Kitchen({ familyId, isOccupied, isUserOccupying, hasFamily, occupants }: {
+export default function Bathroom({ familyId, isOccupied, isUserOccupying, hasFamily, occupants }: {
   familyId: string;
   isOccupied: boolean;
   isUserOccupying: boolean;
@@ -25,7 +25,7 @@ export default function Kitchen({ familyId, isOccupied, isUserOccupying, hasFami
     setError(null);
     setIsLoading(true);
 
-    const result = await setRoomOccupancy(familyId, "kitchen", !isUserOccupying);
+    const result = await setRoomOccupancy(familyId, "bathroom", !isUserOccupying);
 
     if (!result.ok) {
       setError(OCCUPANCY_ERRORS[result.error] ?? "Something went wrong.");
@@ -41,7 +41,7 @@ export default function Kitchen({ familyId, isOccupied, isUserOccupying, hasFami
 
   return (
     <div>
-      <div className="room-label">Kitchen</div>
+      <div className="room-label">Bathroom</div>
       <div className="status">Status: {isOccupied ? "Occupied" : "Available"}</div>
       {occupants.length > 0 && (
         <div className="occupants">

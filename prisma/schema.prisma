@@ -18,10 +18,11 @@ model User {
 }
 
 model Family {
-  id          String         @id @default(cuid())
+  id          String           @id @default(cuid())
   name        String
 
-  memberships FamilyMember[] // all users in this family
+  memberships     FamilyMember[]    // all users in this family
+  occupancyEvents OccupancyEvent[]
 }
 
 model FamilyMember {
@@ -30,12 +31,28 @@ model FamilyMember {
   familyId    String
   joinedAt    DateTime  @default(now())
 
-  // occupancy info, scoped to this user-in-this-family
+  // occupancy info, scoped to this user-in-this-family (current state)
   location    String?
   startedAt   DateTime  @default(now())
 
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  family      Family    @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  family          Family           @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  occupancyEvents OccupancyEvent[]
 
   @@unique([userId, familyId]) // no duplicate membership rows
+}
+
+// history: one row per stay in a room. current stay has endedAt = null
+model OccupancyEvent {
+  id        String    @id @default(cuid())
+  memberId  String
+  familyId  String
+  room      String
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+
+  member FamilyMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  family Family       @relation(fields: [familyId], references: [id], onDelete: Cascade)
+
+  @@index([familyId, startedAt])
 }

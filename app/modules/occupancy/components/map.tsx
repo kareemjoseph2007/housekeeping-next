@@ -1,6 +1,6 @@
 import Bathroom from "./bathroom";
 import Kitchen from "./kitchen";
-import type { Occupancy } from "../lib/occupancy.server";
+import type { Occupancy } from "../occupancy.server";
 
 export default function Map({ occupancy, familyId }: { occupancy: Occupancy; familyId: string }) {
     return (

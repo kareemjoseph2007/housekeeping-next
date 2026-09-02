@@ -1,6 +1,7 @@
 import Link from "next/link";
-import Map from "../../components/map";
-import { getOccupancy } from "../../lib/occupancy.server";
+import Map from "../../modules/occupancy/components/map";
+import { getOccupancy } from "../../modules/occupancy/occupancy.server";
+import EventHistory from "../../modules/occupancy/components/event-history";
 
 export default async function MapPage({
     params,
@@ -22,6 +23,7 @@ export default async function MapPage({
 
     return (
         <div>
+            <EventHistory familyId={familyID} />
             <h1>Map Page</h1>
             <Map occupancy={occupancy} familyId={familyID} />
         </div>

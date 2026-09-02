@@ -1,5 +1,5 @@
-import { getCurrentUserId } from "./auth/auth";
-import { prisma } from "./prisma";
+import { getCurrentUserId } from "../auth/auth";
+import { prisma } from "../lib/prisma";
 
 export type Room = "bathroom" | "kitchen";
 
