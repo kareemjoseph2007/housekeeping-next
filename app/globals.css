@@ -1,8 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f3f0ea;
+  --foreground: #1c1917;
+  --surface: #fffcf7;
+  --muted: #57534e;
+  --line: #d8d2c8;
+  --accent: #1f4e79;
+  --accent-hover: #173a5a;
+  --danger: #b42318;
 }
 
 @theme inline {
@@ -14,121 +20,299 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #1c1b19;
+    --foreground: #f0ece4;
+    --surface: #2a2825;
+    --muted: #a8a29e;
+    --line: #3f3c38;
+    --accent: #7eb0d4;
+    --accent-hover: #9bc4e0;
+    --danger: #f97066;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+* {
+  box-sizing: border-box;
 }
 
-/* Floorplan / map styling for a simple 2D house view */
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), "Segoe UI", sans-serif;
+  line-height: 1.5;
+}
+
+main {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+}
+
+main h1 {
+  margin: 0 0 20px;
+  font-size: 1.75rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+main h2 {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+main p {
+  margin: 0 0 12px;
+  color: var(--muted);
+}
+
+main a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+main a:hover {
+  text-decoration: underline;
+}
+
+main code {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.85em;
+  background: var(--background);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+
+main form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 12px 0 20px;
+}
+
+main input {
+  width: min(100%, 320px);
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--foreground);
+  font: inherit;
+}
+
+main input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+main button:not(.occupy-btn) {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font: inherit;
+  cursor: pointer;
+}
+
+main button:not(.occupy-btn):hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+main button:not(.occupy-btn):disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (prefers-color-scheme: dark) {
+  main button:not(.occupy-btn) {
+    color: #1c1917;
+  }
+}
+
+main section {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 16px 0;
+}
+
+main ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: var(--muted);
+}
+
+main li {
+  margin-bottom: 6px;
+}
+
+.app-nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.app-nav a,
+.app-nav button {
+  color: var(--foreground);
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.app-nav a:hover,
+.app-nav button:hover {
+  color: var(--accent);
+}
+
+.app-footer {
+  margin-top: auto;
+  padding: 16px 24px;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.app-footer p {
+  margin: 0;
+  max-width: 960px;
+}
+
 .floorplan {
   position: relative;
   width: 100%;
   max-width: 900px;
   aspect-ratio: 16 / 9;
   margin: 24px auto;
-  background: #f7f5f0;
-  border: 6px solid #333;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-  border-radius: 6px;
+  background: #ebe4d4;
+  border: 5px solid #3d3935;
+  box-shadow: 0 2px 8px rgba(28, 25, 23, 0.08);
+  border-radius: 4px;
   overflow: hidden;
 }
 
 .floorplan::after {
-  /* subtle grid to mimic floor tiles / scale */
   content: "";
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
   background-size: 40px 40px, 40px 40px;
   pointer-events: none;
 }
 
 .room {
   position: absolute;
-  border: 3px solid #2b2b2b;
+  border: 2px solid #3d3935;
   box-sizing: border-box;
-  background: rgba(255,255,255,0.85);
+  background: rgba(255, 252, 247, 0.92);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 8px;
-  transition: transform 120ms ease, box-shadow 120ms ease;
 }
 
-.room:hover { transform: translateY(-4px); box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
+.room > * {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 
-.room > * { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.bathroom {
+  left: 6%;
+  top: 8%;
+  width: 24%;
+  height: 26%;
+  background: #dce8ef;
+}
 
-.bathroom { left: 6%; top: 8%; width: 24%; height: 26%; background: #e6f7ff; }
-.kitchen  { left: 36%; top: 8%; width: 52%; height: 36%; background: #fff6e6; }
+.kitchen {
+  left: 36%;
+  top: 8%;
+  width: 52%;
+  height: 36%;
+  background: #efe4cc;
+}
 
-.room-label { font-weight: 700; color: #222; font-size: 14px; margin-bottom: 6px; }
-.room .status { font-size: 13px; color: #444; }
+.room-label {
+  font-weight: 700;
+  color: #1c1917;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
 
-/* Doors (simple visual) */
+.room .status {
+  font-size: 13px;
+  color: #44403c;
+}
+
 .door {
   position: absolute;
-  width: 10px; height: 36px;
+  width: 10px;
+  height: 36px;
   background: #6b4e31;
   border-radius: 2px;
 }
-.door.horizontal { width: 36px; height: 10px; }
 
-/* room controls */
+.door.horizontal {
+  width: 36px;
+  height: 10px;
+}
+
 .occupy-btn {
-  background: #2b6cb0;
+  background: var(--accent);
   color: white;
   border: none;
-  padding: 6px 10px;
+  padding: 6px 12px;
   border-radius: 4px;
   cursor: pointer;
+  font: inherit;
+  font-size: 13px;
 }
-.occupy-btn:active { transform: translateY(1px); }
+
+.occupy-btn:active {
+  transform: translateY(1px);
+}
+
 .occupy-btn:disabled {
-  background: #a0aec0;
-  color: #edf2f7;
+  background: #a8a29e;
+  color: #f5f5f4;
   cursor: not-allowed;
 }
-.occupy-btn:disabled:active { transform: none; }
+
+.occupy-btn:disabled:active {
+  transform: none;
+}
 
 .room.room-you {
-  box-shadow: 0 0 0 3px #2b6cb0, 0 6px 18px rgba(43, 108, 176, 0.25);
+  box-shadow: inset 0 0 0 3px var(--accent);
 }
 
 .occupants {
   font-size: 12px;
-  color: #4a5568;
+  color: #57534e;
   margin-top: 4px;
   text-align: center;
-}
-
-.app-nav {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 20px;
-  border-bottom: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
-  background: color-mix(in srgb, var(--foreground) 4%, var(--background));
-}
-
-.app-nav a,
-.app-nav button {
-  color: #2b6cb0;
-  text-decoration: none;
-  background: none;
-  border: none;
-  padding: 0;
-  font: inherit;
-  cursor: pointer;
-}
-
-.app-nav a:hover,
-.app-nav button:hover {
-  text-decoration: underline;
 }

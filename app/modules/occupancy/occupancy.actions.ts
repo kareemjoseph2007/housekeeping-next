@@ -1,6 +1,7 @@
 "use server";
 import { getMembership, type Room } from "./occupancy.server";
 import { prisma } from "../lib/prisma";
+import { notifyFamily } from "./occupancy-subs";
 
 export async function setRoomOccupancy(familyId: string, room: Room, occupied: boolean) {
     const membership = await getMembership(familyId);
@@ -37,6 +38,7 @@ export async function setRoomOccupancy(familyId: string, room: Room, occupied: b
             },
         }),
     ]);
+    notifyFamily(familyId);
 
     return { ok: true as const };
 }
