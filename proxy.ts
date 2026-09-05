@@ -19,5 +19,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/families", "/families/:path*", "/map", "/map/:path*"],
+    matcher: ["/families", "/families/:path*", "/map", "/map/:path*", "/api/map/:path*"],
 };

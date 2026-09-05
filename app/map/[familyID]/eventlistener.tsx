@@ -9,7 +9,7 @@ export default function EventListener({ familyID }: { familyID: string }) {
     const router = useRouter();
 
     useEffect(() => {
-        const eventSource = new EventSource(`/map/${familyID}/events`);
+        const eventSource = new EventSource(`/api/map/${familyID}/events`);
         eventSource.onmessage = (event) => {
             console.log(event.data);
             router.refresh();
