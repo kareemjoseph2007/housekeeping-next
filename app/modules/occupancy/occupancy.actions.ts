@@ -12,33 +12,50 @@ export async function setRoomOccupancy(familyId: string, room: Room, occupied: b
         return { ok: false as const, error: "NOT_IN_ROOM" };
     }
 
-    // await prisma.familyMember.update({
-    //     where: { id: membership.id },
-    //     data: {
-    //         location: occupied ? room : null,
-    //         startedAt: new Date(),
-    //     },
-    // });
+    const now = new Date();
 
-    await prisma.$transaction([
-        prisma.familyMember.update({
+    await prisma.$transaction(async (tx) => {
+        await tx.familyMember.update({
             where: { id: membership.id },
             data: {
                 location: occupied ? room : null,
-                startedAt: new Date(),
+                startedAt: now,
             },
-        }),
-        prisma.occupancyEvent.create({
-            data: {
-                memberId: membership.id,
-                familyId,
-                room,
-                startedAt: new Date(),
-                endedAt: occupied ? null : new Date(),
-            },
-        }),
-    ]);
-    notifyFamily(familyId);
+        });
 
-    return { ok: true as const };
+        // one open stay per member: close whatever is in progress
+        await tx.occupancyEvent.updateMany({
+            where: { memberId: membership.id, endedAt: null },
+            data: { endedAt: now },
+        });
+
+        if (occupied) {
+            await tx.occupancyEvent.create({
+                data: {
+                    memberId: membership.id,
+                    familyId,
+                    room,
+                    startedAt: now,
+                    endedAt: null,
+                },
+            });
+        }
+
+        await tx.outbox.create({
+            data: {
+                type: "occupancy",
+                payload: {
+                    familyId,
+                    room,
+                    occupied,
+                },
+            },
+        });
+    });
+
+    await prisma.$executeRaw`NOTIFY outbox`;
+
+  notifyFamily(familyId);
+
+  return { ok: true as const };
 }

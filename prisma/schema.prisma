@@ -56,3 +56,14 @@ model OccupancyEvent {
 
   @@index([familyId, startedAt])
 }
+
+// to-do list for the worker. processedAt = null means not done yet
+model Outbox {
+  id          String    @id @default(cuid())
+  type        String
+  payload     Json
+  createdAt   DateTime  @default(now())
+  processedAt DateTime?
+
+  @@index([processedAt])
+}
