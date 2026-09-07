@@ -19,6 +19,8 @@ export default function EventListener({ familyID }: { familyID: string }) {
         };
     }, [familyID, router]);
 
+    
+
     return (
         <div>
             <h1>Events</h1>
